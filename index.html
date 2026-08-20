@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Scripture Verse Card Maker - AppADay 105</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=EB+Garamond:ital,wght@0,500;1,500&family=Lora:ital,wght@0,500;0,700;1,500;1,700&family=Cormorant+Garamond:ital,wght@0,700;1,700&family=Crimson+Text:ital,wght@0,400;1,400&family=Libre+Franklin:wght@700;800&family=Source+Serif+4:ital,wght@0,400;1,400&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1216;
+    --panel:#171b21;
+    --panel2:#1e232b;
+    --border:#2a303a;
+    --text:#eceef1;
+    --text-dim:#9aa3af;
+    --accent:#c9a24b;
+    --accent2:#8a6bd8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100dvh;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    display:flex;
+    flex-direction:column;
+  }
+  header.portal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 18px;
+    border-bottom:1px solid var(--border);
+    background:var(--panel);
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  header.portal-header a{
+    color:var(--accent);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+  }
+  header.portal-header a:hover{text-decoration:underline;}
+  .app-title{
+    font-size:13px;
+    color:var(--text-dim);
+    letter-spacing:.04em;
+  }
+  main{
+    flex:1;
+    width:100%;
+    max-width:1100px;
+    margin:0 auto;
+    padding:20px 16px 40px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:22px;
+  }
+  @media (min-width:880px){
+    main{
+      grid-template-columns:380px 1fr;
+      align-items:start;
+    }
+  }
+  h1{
+    font-size:22px;
+    margin:0 0 4px;
+    font-family:'Playfair Display',serif;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:13px;
+    margin:0 0 18px;
+  }
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+  }
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    margin:14px 0 6px;
+  }
+  label:first-of-type{margin-top:0;}
+  input[type=text], textarea, select{
+    width:100%;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    padding:10px 12px;
+    resize:vertical;
+  }
+  select{
+    min-height:44px;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  textarea{min-height:110px; line-height:1.4;}
+  input[type=text]:focus, textarea:focus, select:focus{
+    outline:none;
+    border-color:var(--accent);
+  }
+  .tmpl-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .tmpl-btn{
+    border:2px solid var(--border);
+    border-radius:10px;
+    padding:10px 6px;
+    background:var(--panel2);
+    color:var(--text);
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    text-align:center;
+    min-height:44px;
+  }
+  .tmpl-btn.active{
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .swatch{
+    display:block;
+    width:100%;
+    height:28px;
+    border-radius:6px;
+    margin-bottom:6px;
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .sw-solid{background:linear-gradient(135deg,#181c24,#20242c);}
+  .sw-gradient{background:linear-gradient(135deg,#3a2d6b,#8a4fae);}
+  .sw-pattern{background:radial-gradient(circle,#3d4757 1px,#20242c 1px);background-size:8px 8px;}
+  .sw-frame{background:#faf6ee;border:2px solid #c9a24b;}
+  .sw-duotone{background:linear-gradient(135deg,#1b2420 50%,#3f5a4a 50%);}
+  .sw-radial{background:radial-gradient(circle,#5a4098,#14161d);}
+  .sw-corner{background:#181c24;border:2px dashed #c9a24b;}
+  .sw-ribbon{background:linear-gradient(to bottom,#14161d 38%,#c9a24b 38%,#c9a24b 58%,#14161d 58%);}
+
+  .theme-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+  }
+  .theme-btn{
+    border:2px solid var(--border);
+    border-radius:10px;
+    padding:8px 4px;
+    background:var(--panel2);
+    color:var(--text);
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+    text-align:center;
+    min-height:44px;
+  }
+  .theme-btn.active{border-color:var(--accent); color:var(--accent);}
+  .theme-swatch{
+    display:block;
+    width:100%;
+    height:22px;
+    border-radius:6px;
+    margin-bottom:5px;
+    border:1px solid rgba(255,255,255,.08);
+  }
+
+  .font-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .font-btn{
+    border:2px solid var(--border);
+    border-radius:10px;
+    padding:10px 12px;
+    background:var(--panel2);
+    color:var(--text);
+    font-size:16px;
+    cursor:pointer;
+    text-align:left;
+    min-height:44px;
+  }
+  .font-btn.active{border-color:var(--accent); color:var(--accent);}
+  .font-btn small{
+    display:block;
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    color:var(--text-dim);
+    font-weight:600;
+    margin-top:2px;
+  }
+
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 12px;
+    margin-top:14px;
+  }
+  .toggle-row span{font-size:13px; font-weight:600;}
+  .switch{
+    position:relative;
+    width:46px;
+    height:26px;
+    background:var(--border);
+    border-radius:999px;
+    cursor:pointer;
+    border:none;
+    padding:0;
+  }
+  .switch::after{
+    content:"";
+    position:absolute;
+    top:3px; left:3px;
+    width:20px; height:20px;
+    border-radius:50%;
+    background:var(--text);
+    transition:transform .15s ease;
+  }
+  .switch.on{background:var(--accent);}
+  .switch.on::after{transform:translateX(20px);}
+  .actions{
+    margin-top:18px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  button.primary{
+    background:var(--accent);
+    color:#1a1508;
+    border:none;
+    border-radius:8px;
+    font-weight:700;
+    font-size:14px;
+    padding:12px 14px;
+    cursor:pointer;
+    min-height:44px;
+  }
+  button.secondary{
+    background:transparent;
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-weight:600;
+    font-size:14px;
+    padding:12px 14px;
+    cursor:pointer;
+    min-height:44px;
+  }
+  button.primary:active, button.secondary:active{transform:translateY(1px);}
+  #status{
+    font-size:12px;
+    color:var(--text-dim);
+    min-height:16px;
+    text-align:center;
+  }
+  .preview-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  }
+  .canvas-frame{
+    width:100%;
+    max-width:520px;
+    max-height:70vh;
+    aspect-ratio:1/1;
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  canvas{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .size-note{
+    font-size:12px;
+    color:var(--text-dim);
+    text-align:center;
+    margin:0;
+  }
+  footer.portal-footer{
+    text-align:center;
+    padding:16px;
+    border-top:1px solid var(--border);
+    background:var(--panel);
+  }
+  footer.portal-footer a{
+    color:var(--accent);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+  }
+  footer.portal-footer a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<header class="portal-header">
+  <a href="https://augustineiacopelli.github.io/appaday/">&larr; AppADay</a>
+  <span class="app-title">105 / Scripture Verse Card Maker</span>
+</header>
+
+<main>
+  <div class="panel">
+    <h1>Verse Card Maker</h1>
+    <p class="sub">Turn any Scripture verse into a shareable card.</p>
+
+    <label for="ref-input">Reference</label>
+    <input type="text" id="ref-input" placeholder="Philippians 4:6-7" maxlength="60" value="Philippians 4:6-7">
+
+    <label for="verse-input">Verse Text</label>
+    <textarea id="verse-input" maxlength="500" placeholder="Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.">Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.</textarea>
+
+    <label>Template</label>
+    <div class="tmpl-grid" id="tmpl-grid">
+      <button class="tmpl-btn active" data-tmpl="solid"><span class="swatch sw-solid"></span>Solid</button>
+      <button class="tmpl-btn" data-tmpl="gradient"><span class="swatch sw-gradient"></span>Gradient</button>
+      <button class="tmpl-btn" data-tmpl="pattern"><span class="swatch sw-pattern"></span>Pattern</button>
+      <button class="tmpl-btn" data-tmpl="frame"><span class="swatch sw-frame"></span>Framed</button>
+      <button class="tmpl-btn" data-tmpl="duotone"><span class="swatch sw-duotone"></span>Duotone</button>
+      <button class="tmpl-btn" data-tmpl="radial"><span class="swatch sw-radial"></span>Glow</button>
+      <button class="tmpl-btn" data-tmpl="corner"><span class="swatch sw-corner"></span>Corner Accent</button>
+      <button class="tmpl-btn" data-tmpl="ribbon"><span class="swatch sw-ribbon"></span>Ribbon</button>
+    </div>
+
+    <label>Color Theme</label>
+    <div class="theme-grid" id="theme-grid"></div>
+
+    <label>Font Pairing</label>
+    <div class="font-list" id="font-list"></div>
+
+    <div class="toggle-row">
+      <span>Dark Mode</span>
+      <button class="switch on" id="mode-toggle" aria-label="Toggle dark or light mode"></button>
+    </div>
+
+    <label for="size-select">Card Size</label>
+    <select id="size-select"></select>
+    <p class="size-note" id="size-note"></p>
+
+    <div class="actions">
+      <button class="primary" id="download-btn">Download Image</button>
+      <button class="secondary" id="copy-btn">Copy to Clipboard</button>
+      <div id="status"></div>
+    </div>
+  </div>
+
+  <div class="preview-wrap">
+    <div class="canvas-frame" id="canvas-frame">
+      <canvas id="card-canvas" width="1080" height="1080"></canvas>
+    </div>
+  </div>
+</main>
+
+<footer class="portal-footer">
+  <a href="https://augustineiacopelli.github.io/appaday/">Back to AppADay Portfolio</a>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var canvas = document.getElementById("card-canvas");
+  var ctx = canvas.getContext("2d");
+  var canvasFrame = document.getElementById("canvas-frame");
+  var refInput = document.getElementById("ref-input");
+  var verseInput = document.getElementById("verse-input");
+  var tmplGrid = document.getElementById("tmpl-grid");
+  var themeGrid = document.getElementById("theme-grid");
+  var fontList = document.getElementById("font-list");
+  var sizeSelect = document.getElementById("size-select");
+  var sizeNote = document.getElementById("size-note");
+  var modeToggle = document.getElementById("mode-toggle");
+  var downloadBtn = document.getElementById("download-btn");
+  var copyBtn = document.getElementById("copy-btn");
+  var statusEl = document.getElementById("status");
+
+  var THEMES = [
+    { id:"gold", name:"Gold and Ink",
+      bgDark:"#14161d", bgDark2:"#241b45", bgLight:"#faf6ee", bgLight2:"#f6dcc4",
+      verseDark:"#f1ede2", verseLight:"#26221a",
+      refDark:"#c9a24b", refLight:"#8a6229",
+      accentDark:"rgba(201,162,75,0.7)", accentLight:"rgba(138,98,41,0.7)" },
+    { id:"sage", name:"Sage and Cream",
+      bgDark:"#1b2420", bgDark2:"#2c3d33", bgLight:"#f4f2e8", bgLight2:"#dfe6d3",
+      verseDark:"#eef2ea", verseLight:"#293225",
+      refDark:"#8fae7c", refLight:"#4f6b3f",
+      accentDark:"rgba(143,174,124,0.7)", accentLight:"rgba(79,107,63,0.7)" },
+    { id:"navy", name:"Navy and Blush",
+      bgDark:"#131826", bgDark2:"#22304f", bgLight:"#f7f3f2", bgLight2:"#f3d9d9",
+      verseDark:"#eef1f7", verseLight:"#28242a",
+      refDark:"#e2a6ad", refLight:"#b05f68",
+      accentDark:"rgba(226,166,173,0.7)", accentLight:"rgba(176,95,104,0.7)" },
+    { id:"terracotta", name:"Terracotta and Sand",
+      bgDark:"#241712", bgDark2:"#4a2c1c", bgLight:"#fbf1e4", bgLight2:"#f0cba0",
+      verseDark:"#f6ece0", verseLight:"#2e2015",
+      refDark:"#e08a52", refLight:"#a8501f",
+      accentDark:"rgba(224,138,82,0.7)", accentLight:"rgba(168,80,31,0.7)" },
+    { id:"slate", name:"Slate Monochrome",
+      bgDark:"#15171a", bgDark2:"#2b2f36", bgLight:"#f5f5f4", bgLight2:"#dcdcda",
+      verseDark:"#eceeef", verseLight:"#232527",
+      refDark:"#9aa3af", refLight:"#5b6470",
+      accentDark:"rgba(154,163,175,0.7)", accentLight:"rgba(91,100,112,0.7)" },
+    { id:"plum", name:"Rose and Plum",
+      bgDark:"#1e1220", bgDark2:"#3c2144", bgLight:"#fbf1f6", bgLight2:"#eec9de",
+      verseDark:"#f6ecf4", verseLight:"#2b1a2b",
+      refDark:"#c780a8", refLight:"#8a3f66",
+      accentDark:"rgba(199,128,168,0.7)", accentLight:"rgba(138,63,102,0.7)" }
+  ];
+
+  var FONT_PAIRS = [
+    { id:"classic", name:"Classic Serif",
+      quoteFont:"'Playfair Display', serif", quoteWeight:"italic 700",
+      verseFont:"'EB Garamond', serif", verseWeight:"italic 500",
+      refFont:"'Inter', sans-serif", refWeight:"600" },
+    { id:"lora", name:"Modern Lora",
+      quoteFont:"'Lora', serif", quoteWeight:"italic 700",
+      verseFont:"'Lora', serif", verseWeight:"italic 500",
+      refFont:"'Inter', sans-serif", refWeight:"600" },
+    { id:"cormorant", name:"Elegant Cormorant",
+      quoteFont:"'Cormorant Garamond', serif", quoteWeight:"italic 700",
+      verseFont:"'Crimson Text', serif", verseWeight:"italic 400",
+      refFont:"'Inter', sans-serif", refWeight:"600" },
+    { id:"franklin", name:"Bold Franklin",
+      quoteFont:"'Libre Franklin', sans-serif", quoteWeight:"800",
+      verseFont:"'Source Serif 4', serif", verseWeight:"italic 400",
+      refFont:"'Libre Franklin', sans-serif", refWeight:"700" }
+  ];
+
+  var SIZE_PRESETS = [
+    { id:"square", label:"Square Post - 1080x1080", group:"Social", w:1080, h:1080 },
+    { id:"portrait45", label:"Portrait Post - 1080x1350", group:"Social", w:1080, h:1350 },
+    { id:"story", label:"Story / Reel - 1080x1920", group:"Social", w:1080, h:1920 },
+    { id:"landscape", label:"Landscape Post - 1600x900", group:"Social", w:1600, h:900 },
+    { id:"print4x6", label:"Print 4x6 in (300 DPI) - 1200x1800", group:"Print", w:1200, h:1800 },
+    { id:"print5x7", label:"Print 5x7 in (300 DPI) - 1500x2100", group:"Print", w:1500, h:2100 },
+    { id:"print8x10", label:"Print 8x10 in (300 DPI) - 2400x3000", group:"Print", w:2400, h:3000 },
+    { id:"letter", label:"Letter 8.5x11 in (300 DPI) - 2550x3300", group:"Print", w:2550, h:3300 },
+    { id:"a4", label:"A4 (300 DPI) - 2481x3508", group:"Print", w:2481, h:3508 }
+  ];
+
+  var state = {
+    template: "solid",
+    themeId: "gold",
+    fontId: "classic",
+    dark: true,
+    sizeId: "square"
+  };
+
+  var fontsReady = false;
+
+  function getTheme(){
+    for (var i = 0; i < THEMES.length; i++) {
+      if (THEMES[i].id === state.themeId) return THEMES[i];
+    }
+    return THEMES[0];
+  }
+
+  function getFontPair(){
+    for (var i = 0; i < FONT_PAIRS.length; i++) {
+      if (FONT_PAIRS[i].id === state.fontId) return FONT_PAIRS[i];
+    }
+    return FONT_PAIRS[0];
+  }
+
+  function getSizePreset(){
+    for (var i = 0; i < SIZE_PRESETS.length; i++) {
+      if (SIZE_PRESETS[i].id === state.sizeId) return SIZE_PRESETS[i];
+    }
+    return SIZE_PRESETS[0];
+  }
+
+  function hexToRgba(hex, alpha){
+    var h = hex.replace("#", "");
+    var r = parseInt(h.substring(0, 2), 16);
+    var g = parseInt(h.substring(2, 4), 16);
+    var b = parseInt(h.substring(4, 6), 16);
+    return "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+  }
+
+  function buildThemeGrid(){
+    var html = "";
+    for (var i = 0; i < THEMES.length; i++) {
+      var t = THEMES[i];
+      var active = t.id === state.themeId ? " active" : "";
+      html += "<button class=\"theme-btn" + active + "\" data-theme=\"" + t.id + "\">";
+      html += "<span class=\"theme-swatch\" style=\"background:linear-gradient(90deg," + t.bgDark + " 50%," + t.bgLight + " 50%)\"></span>";
+      html += t.name + "</button>";
+    }
+    themeGrid.innerHTML = html;
+  }
+
+  function buildFontList(){
+    var html = "";
+    for (var i = 0; i < FONT_PAIRS.length; i++) {
+      var f = FONT_PAIRS[i];
+      var active = f.id === state.fontId ? " active" : "";
+      html += "<button class=\"font-btn" + active + "\" data-font=\"" + f.id + "\" style=\"font-family:" + f.verseFont + "\">";
+      html += f.name + "<small>Reference and body typography</small></button>";
+    }
+    fontList.innerHTML = html;
+  }
+
+  function buildSizeSelect(){
+    var groups = {};
+    var order = [];
+    var i;
+    for (i = 0; i < SIZE_PRESETS.length; i++) {
+      var p = SIZE_PRESETS[i];
+      if (!groups[p.group]) {
+        groups[p.group] = [];
+        order.push(p.group);
+      }
+      groups[p.group].push(p);
+    }
+    var html = "";
+    for (i = 0; i < order.length; i++) {
+      var groupName = order[i];
+      html += "<optgroup label=\"" + groupName + "\">";
+      var items = groups[groupName];
+      for (var j = 0; j < items.length; j++) {
+        var sel = items[j].id === state.sizeId ? " selected" : "";
+        html += "<option value=\"" + items[j].id + "\"" + sel + ">" + items[j].label + "</option>";
+      }
+      html += "</optgroup>";
+    }
+    sizeSelect.innerHTML = html;
+  }
+
+  function updateSizeNote(){
+    var p = getSizePreset();
+    if (p.group === "Print") {
+      sizeNote.textContent = "Rendered at 300 DPI for sharp printing.";
+    } else {
+      sizeNote.textContent = "Optimized for sharing on social platforms.";
+    }
+  }
+
+  function applyCanvasSize(){
+    var p = getSizePreset();
+    canvas.width = p.w;
+    canvas.height = p.h;
+    canvasFrame.style.aspectRatio = p.w + " / " + p.h;
+  }
+
+  function loadFonts(){
+    var specs = [
+      "italic 700 60px 'Playfair Display'",
+      "italic 500 40px 'EB Garamond'",
+      "italic 700 60px 'Lora'",
+      "italic 500 40px 'Lora'",
+      "italic 700 60px 'Cormorant Garamond'",
+      "italic 400 40px 'Crimson Text'",
+      "800 60px 'Libre Franklin'",
+      "700 60px 'Libre Franklin'",
+      "italic 400 40px 'Source Serif 4'",
+      "600 32px 'Inter'",
+      "500 20px 'Inter'"
+    ];
+    if (document.fonts && document.fonts.ready) {
+      var loads = [];
+      for (var i = 0; i < specs.length; i++) {
+        loads.push(document.fonts.load(specs[i]));
+      }
+      Promise.all(loads).then(function(){
+        fontsReady = true;
+        render();
+      }).catch(function(){
+        fontsReady = true;
+        render();
+      });
+      document.fonts.ready.then(function(){
+        fontsReady = true;
+        render();
+      });
+    } else {
+      setTimeout(function(){ fontsReady = true; render(); }, 400);
+    }
+  }
+
+  function wrapText(text, maxWidth, fontSpec){
+    ctx.font = fontSpec;
+    var words = text.split(/\s+/).filter(Boolean);
+    var lines = [];
+    var current = "";
+    for (var i = 0; i < words.length; i++){
+      var test = current ? current + " " + words[i] : words[i];
+      if (ctx.measureText(test).width > maxWidth && current) {
+        lines.push(current);
+        current = words[i];
+      } else {
+        current = test;
+      }
+    }
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  function fitVerse(text, maxWidth, maxHeight, fontFamily, fontWeight, baseMax, baseMin){
+    var size = baseMax;
+    var minSize = baseMin;
+    var lines = [];
+    var lineHeight = 1.35;
+    var step = Math.max(1, Math.round((baseMax - baseMin) / 19));
+    while (size >= minSize) {
+      var fontSpec = fontWeight + " " + size + "px " + fontFamily;
+      lines = wrapText(text, maxWidth, fontSpec);
+      var totalHeight = lines.length * size * lineHeight;
+      if (totalHeight <= maxHeight) {
+        return { size: size, lines: lines, lineHeight: lineHeight };
+      }
+      size -= step;
+    }
+    return { size: minSize, lines: lines, lineHeight: lineHeight };
+  }
+
+  function drawBackground(W, H, S, theme, dark, template){
+    var bg = dark ? theme.bgDark : theme.bgLight;
+    var bg2 = dark ? theme.bgDark2 : theme.bgLight2;
+
+    if (template === "gradient") {
+      var g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, bg);
+      g.addColorStop(1, bg2);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    } else if (template === "pattern") {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      var dotColor = dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+      ctx.fillStyle = dotColor;
+      var spacing = Math.max(14, Math.round(34 * S));
+      for (var y = spacing / 2; y < H; y += spacing) {
+        for (var x = spacing / 2; x < W; x += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    } else if (template === "frame") {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      var m = Math.round(46 * S);
+      ctx.strokeStyle = dark ? theme.refDark : theme.refLight;
+      ctx.lineWidth = Math.max(2, Math.round(6 * S));
+      ctx.strokeRect(m, m, W - m * 2, H - m * 2);
+      ctx.lineWidth = Math.max(1, 1.5 * S);
+      ctx.strokeRect(m + 14 * S, m + 14 * S, W - (m + 14 * S) * 2, H - (m + 14 * S) * 2);
+    } else if (template === "duotone") {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = bg2;
+      ctx.beginPath();
+      ctx.moveTo(0, H * 0.62);
+      ctx.lineTo(W, H * 0.42);
+      ctx.lineTo(W, H);
+      ctx.lineTo(0, H);
+      ctx.closePath();
+      ctx.fill();
+    } else if (template === "radial") {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      var rg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.6);
+      rg.addColorStop(0, bg2);
+      rg.addColorStop(1, bg);
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, W, H);
+    } else if (template === "corner") {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      var accent = dark ? theme.refDark : theme.refLight;
+      var len = Math.round(70 * S);
+      var off = Math.round(55 * S);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = Math.max(2, Math.round(3 * S));
+      var corners = [
+        [off, off, 1, 1],
+        [W - off, off, -1, 1],
+        [off, H - off, 1, -1],
+        [W - off, H - off, -1, -1]
+      ];
+      for (var i = 0; i < corners.length; i++) {
+        var cx = corners[i][0], cy = corners[i][1], dx = corners[i][2], dy = corners[i][3];
+        ctx.beginPath();
+        ctx.moveTo(cx + dx * len, cy);
+        ctx.lineTo(cx, cy);
+        ctx.lineTo(cx, cy + dy * len);
+        ctx.stroke();
+      }
+    } else {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  function textColors(theme, dark){
+    return {
+      verse: dark ? theme.verseDark : theme.verseLight,
+      ref: dark ? theme.refDark : theme.refLight,
+      accent: dark ? theme.accentDark : theme.accentLight
+    };
+  }
+
+  function drawQuoteMark(x, y, color, fontFamily, fontWeight, size){
+    ctx.save();
+    ctx.font = fontWeight + " " + size + "px " + fontFamily;
+    ctx.fillStyle = color;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("\u201C", x, y);
+    ctx.restore();
+  }
+
+  function render(){
+    if (!ctx) return;
+    var W = canvas.width;
+    var H = canvas.height;
+    var S = Math.min(W, H) / 1080;
+    var theme = getTheme();
+    var pair = getFontPair();
+    var dark = state.dark;
+
+    ctx.clearRect(0, 0, W, H);
+    drawBackground(W, H, S, theme, dark, state.template);
+
+    var colors = textColors(theme, dark);
+    var padding = Math.round((state.template === "frame" ? 130 : 100) * S);
+    var maxWidth = W - padding * 2;
+
+    var verseText = (verseInput.value || "").trim();
+    var refText = (refInput.value || "").trim();
+    if (!verseText) verseText = "Your word is a lamp to my feet and a light to my path.";
+    if (!refText) refText = "Psalm 119:105";
+
+    var quoteSize = Math.round(140 * S);
+    drawQuoteMark(padding - 10 * S, padding - 70 * S, colors.accent, pair.quoteFont, pair.quoteWeight, quoteSize);
+
+    var maxHeight = H - padding * 2 - 160 * S;
+    var fit = fitVerse(verseText, maxWidth, maxHeight, pair.verseFont, pair.verseWeight, Math.round(64 * S), Math.max(14, Math.round(26 * S)));
+    ctx.font = pair.verseWeight + " " + fit.size + "px " + pair.verseFont;
+    ctx.fillStyle = colors.verse;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+
+    var blockHeight = fit.lines.length * fit.size * fit.lineHeight;
+    var startY = H / 2 - blockHeight / 2 + fit.size;
+
+    for (var i = 0; i < fit.lines.length; i++) {
+      ctx.fillText(fit.lines[i], W / 2, startY + i * fit.size * fit.lineHeight);
+    }
+
+    var refSize = Math.max(14, Math.round(30 * S));
+    var refY = startY + fit.lines.length * fit.size * fit.lineHeight + 56 * S;
+    refY = Math.min(refY, H - padding + 20 * S);
+
+    if (state.template === "ribbon") {
+      var bandColor = dark ? hexToRgba(theme.bgDark2, 0.55) : hexToRgba(theme.bgLight2, 0.65);
+      ctx.fillStyle = bandColor;
+      ctx.fillRect(0, refY - refSize * 1.5, W, refSize * 2.6);
+    }
+
+    ctx.font = pair.refWeight + " " + refSize + "px " + pair.refFont;
+    ctx.fillStyle = colors.ref;
+    ctx.textAlign = "center";
+    ctx.fillText(refText.toUpperCase(), W / 2, refY);
+
+    var footerY = state.template === "frame" ? H - 74 * S : H - 44 * S;
+    var footerSize = Math.max(12, Math.round(20 * S));
+    ctx.font = "500 " + footerSize + "px 'Inter', sans-serif";
+    ctx.fillStyle = colors.accent;
+    ctx.textAlign = "center";
+    ctx.fillText("AppADay 105", W / 2, footerY);
+  }
+
+  function setStatus(msg){
+    statusEl.textContent = msg;
+    if (msg) {
+      setTimeout(function(){
+        if (statusEl.textContent === msg) statusEl.textContent = "";
+      }, 3000);
+    }
+  }
+
+  tmplGrid.addEventListener("click", function(e){
+    var btn = e.target.closest(".tmpl-btn");
+    if (!btn) return;
+    var buttons = tmplGrid.querySelectorAll(".tmpl-btn");
+    for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove("active");
+    btn.classList.add("active");
+    state.template = btn.getAttribute("data-tmpl");
+    render();
+  });
+
+  themeGrid.addEventListener("click", function(e){
+    var btn = e.target.closest(".theme-btn");
+    if (!btn) return;
+    var buttons = themeGrid.querySelectorAll(".theme-btn");
+    for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove("active");
+    btn.classList.add("active");
+    state.themeId = btn.getAttribute("data-theme");
+    render();
+  });
+
+  fontList.addEventListener("click", function(e){
+    var btn = e.target.closest(".font-btn");
+    if (!btn) return;
+    var buttons = fontList.querySelectorAll(".font-btn");
+    for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove("active");
+    btn.classList.add("active");
+    state.fontId = btn.getAttribute("data-font");
+    render();
+  });
+
+  sizeSelect.addEventListener("change", function(){
+    state.sizeId = sizeSelect.value;
+    applyCanvasSize();
+    updateSizeNote();
+    render();
+  });
+
+  modeToggle.addEventListener("click", function(){
+    state.dark = !state.dark;
+    if (state.dark) {
+      modeToggle.classList.add("on");
+    } else {
+      modeToggle.classList.remove("on");
+    }
+    render();
+  });
+
+  var renderTimer = null;
+  function debounceRender(){
+    if (renderTimer) clearTimeout(renderTimer);
+    renderTimer = setTimeout(render, 120);
+  }
+  refInput.addEventListener("input", debounceRender);
+  verseInput.addEventListener("input", debounceRender);
+
+  function safeFilename(){
+    var ref = (refInput.value || "verse").trim().toLowerCase();
+    ref = ref.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    if (!ref) ref = "verse-card";
+    var preset = getSizePreset();
+    return "appaday-105-" + ref + "-" + preset.id + ".png";
+  }
+
+  downloadBtn.addEventListener("click", function(){
+    try {
+      canvas.toBlob(function(blob){
+        if (!blob) {
+          setStatus("Could not generate image.");
+          return;
+        }
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = safeFilename();
+        document.body.appendChild(a);
+        a.click();
+        if (a.parentNode) {
+          a.parentNode.removeChild(a);
+        }
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+        setStatus("Downloaded.");
+      }, "image/png");
+    } catch (err) {
+      setStatus("Download failed.");
+    }
+  });
+
+  copyBtn.addEventListener("click", function(){
+    try {
+      canvas.toBlob(function(blob){
+        if (!blob) {
+          copyTextFallback();
+          return;
+        }
+        if (navigator.clipboard && window.ClipboardItem) {
+          var item = new ClipboardItem({ "image/png": blob });
+          navigator.clipboard.write([item]).then(function(){
+            setStatus("Image copied to clipboard.");
+          }).catch(function(){
+            copyTextFallback();
+          });
+        } else {
+          copyTextFallback();
+        }
+      }, "image/png");
+    } catch (err) {
+      copyTextFallback();
+    }
+  });
+
+  function copyTextFallback(){
+    var text = (verseInput.value || "").trim();
+    var ref = (refInput.value || "").trim();
+    var full = text + (ref ? "\n\u2014 " + ref : "");
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(full).then(function(){
+          setStatus("Image copy unsupported. Verse text copied instead.");
+        }).catch(function(){
+          setStatus("Copy failed. Try downloading instead.");
+        });
+      } else {
+        setStatus("Copy unsupported on this browser. Try downloading instead.");
+      }
+    } catch (err) {
+      setStatus("Copy failed. Try downloading instead.");
+    }
+  }
+
+  buildThemeGrid();
+  buildFontList();
+  buildSizeSelect();
+  applyCanvasSize();
+  updateSizeNote();
+  loadFonts();
+  render();
+})();
+</script>
+
+</body>
+</html>
